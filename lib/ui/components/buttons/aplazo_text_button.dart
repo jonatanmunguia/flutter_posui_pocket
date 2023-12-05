@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_posui_pocket/ui/theme_config.dart';
+import 'package:flutter_posui_pocket/ui/theme/theme_config.dart';
 
 class AplazoTextButton extends StatelessWidget {
   final TextButtonProps textButtonProps;
