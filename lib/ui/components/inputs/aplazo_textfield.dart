@@ -82,8 +82,13 @@ class _AplazoTextFieldState extends State<AplazoTextField> {
                 widget.textFieldProps.maxLenght,
             textAlign: TextAlign.left,
             textAlignVertical: TextAlignVertical.center,
-            obscureText: widget.textFieldProps.textFieldType.isCvv,
-            maxLines: widget.textFieldProps.textFieldType.isCvv ? 1 : null,
+            obscureText: widget.textFieldProps.textFieldType.isCvv ||
+                widget.textFieldProps.isPassword &&
+                    widget.textFieldProps.showPassword,
+            maxLines: widget.textFieldProps.textFieldType.isCvv ||
+                    widget.textFieldProps.isPassword
+                ? 1
+                : null,
             keyboardType: widget.textFieldProps.textFieldType.textInputType,
             autofocus: widget.textFieldProps.autofocus,
             autocorrect: widget.textFieldProps.autocorrect,
@@ -110,7 +115,7 @@ class _AplazoTextFieldState extends State<AplazoTextField> {
                   fontWeight: TextType.smallText.fontWeight),
               helperText: widget.textFieldProps.helperText,
               prefixIcon: widget.textFieldProps.textFieldType.customWidget,
-              suffixIcon: widget.textFieldProps.textFieldType.suffix,
+              suffixIcon: widget.textFieldProps.suffixCustomWidget ?? widget.textFieldProps.textFieldType.suffix,
               disabledBorder:
                   _getOutlineInputBorder(AppTheme.borderColor.withAlpha(150)),
               border: _getOutlineInputBorder(AppTheme.borderColor),
@@ -235,6 +240,12 @@ class TextFieldProps {
   final double verticalPadding;
   final TextInputAction? textInputAction;
 
+  final Widget? suffixCustomWidget;
+
+  final bool isPassword;
+
+  final bool showPassword;
+
   TextFieldProps(
       {this.hintText,
       required this.textFieldType,
@@ -246,6 +257,9 @@ class TextFieldProps {
       this.isEnable = true,
       this.withCounter = true,
       this.newStyle = false,
+      this.isPassword = false,
+      this.suffixCustomWidget,
+      this.showPassword = false,
       this.errorText = 'Campo inválido',
       this.maxLenght = 20,
       this.showError = false,
