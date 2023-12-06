@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_posui_pocket/core/extensiones/build_extensions.dart';
+import 'package:flutter_posui_pocket/features/panel/presentation/panel_screen.dart';
+import 'package:flutter_posui_pocket/features/ventas/presentation/ventas_screen.dart';
 import 'package:flutter_posui_pocket/ui/components/buttons/aplazo_button.dart';
 import 'package:flutter_posui_pocket/ui/components/texts/aplazo_text.dart';
 import 'package:flutter_svg/svg.dart';
@@ -116,13 +119,16 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
               Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: GridView.builder(
                   itemCount: shortcuts.length,
                   shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  gridDelegate:
-                  const SliverGridDelegateWithFixedCrossAxisCount(
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 4,
                   ),
                   itemBuilder: (context, index) =>
-                      rowShortcut(shortcuts[index])),)
+                        rowShortcut(shortcuts[index], (shortcut) {
+                          handleShortcut(shortcut, context);
+                        })),
+              )
             ],
           )),
           AplazoButton(
@@ -137,22 +143,37 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
     );
   }
 
-  Widget rowShortcut(Shortcut shortcut) {
-    return Container(
-      child: Column(
-        children: [
+  void handleShortcut(Shortcut shortcut, BuildContext context) {
+    if (shortcut.moveTo == 'panel') {
+      context.materialPush(screen: const PanelScreen());
+    }
+
+    if (shortcut.moveTo == 'ventas') {
+      context.materialPush(screen: const VentasScreen());
+    }
+  }
+
+  Widget rowShortcut(Shortcut shortcut, Function(Shortcut) onTapShortcut) {
+    return GestureDetector(
+      onTap: () {
+        onTapShortcut.call(shortcut);
+      },
+      child: SizedBox(
+        width: 60,
+        height: 100,
+        child: Column(
+          children: [
           SvgPicture.asset(shortcut.asset, height: 50, width: 50,),
-          SizedBox(
-            height: 8,
-          ),
+            const SizedBox(
+              height: 8,
+            ),
           AplazoText(
               textProps: TextProps(
                   text: shortcut.name,
                   type: TextType.headlineSize12Weight500))
         ],
       ),
-      width: 60,
-      height: 100,
+      ),
     );
   }
 }
