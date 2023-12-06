@@ -88,7 +88,9 @@ class _LoginScreenState extends State<LoginScreen> {
             AplazoButton(
                 buttonProps: ButtonProps(
                     text: 'Continuar', buttonType: ButtonType.primary),
-                onPressed: () {}),
+                onPressed: () {
+
+                }),
             const SizedBox(
               height: 16,
             ),
