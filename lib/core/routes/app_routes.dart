@@ -4,7 +4,7 @@ import 'package:flutter_posui_pocket/features/main_dashboard/presentation/main_d
 import 'package:flutter_posui_pocket/features/splash/presentation/splash_screen.dart';
 
 class AppRoutes {
-  static const initialRoute = MainDashboardScreen.idScreen;
+  static const initialRoute = SplashScreen.idScreen;
   static Map<String, Widget Function(BuildContext)> routes = {
     SplashScreen.idScreen: (_) => const SplashScreen(),
     LoginScreen.idScreen: (_) => const LoginScreen(),

@@ -22,30 +22,222 @@ class _ProductsInPedidoScreenState extends State<ProductsInPedidoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Spacer(),
-          SvgPicture.asset('assets/images/ic_no_products.svg'),
-          Spacer(),
-          AplazoText(
-              textProps: TextProps(
-                  text: 'Empieza agregando productos.',
-                  type: TextType.headlineSize16Weight700)),
-          Spacer(),
-          AplazoButton(
-              buttonProps: ButtonProps(
-                  text: 'Añadir producto', buttonType: ButtonType.primary),
-              onPressed: () {
-                showAddProductDialog();
-              }),
-          Spacer(),
-          Spacer(),
-          Spacer()
-        ],
-      ),
+      body: ordersList(),
       appBar: AplazoNavbar(
         navbarProps: NavbarProps(title: 'Pedido nuevo'),
       ),
+    );
+  }
+
+  Widget ordersList() {
+    return Column(
+      children: [
+        const SizedBox(
+          height: 8,
+        ),
+        AplazoText(
+            textProps: TextProps(
+                text: 'Productos', type: TextType.headlineSize24Weight700)),
+        Expanded(
+            child: ListView.builder(
+                itemCount: 10, itemBuilder: (context, index) => rowProduct())),
+        const SizedBox(
+          height: 8,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Container(
+            decoration: BoxDecoration(
+                border: Border.all(width: 1, color: Colors.grey),
+                borderRadius: BorderRadius.circular(16)),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      AplazoText(
+                          textProps: TextProps(
+                              text: 'Total a pagar',
+                              type: TextType.headlineSize12Weight600Semibold)),
+                      const Spacer(),
+                      AplazoText(
+                          textProps: TextProps(
+                              text: '\$12,940.00',
+                              type: TextType.headlineSize12Weight400)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Container(
+            decoration: BoxDecoration(
+                border: Border.all(width: 1, color: Colors.grey),
+                borderRadius: BorderRadius.circular(16)),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      AplazoText(
+                          textProps: TextProps(
+                              text: 'Asesor de ventas',
+                              type: TextType.headlineSize12Weight600Semibold)),
+                      const Spacer(),
+                      AplazoText(
+                          textProps: TextProps(
+                              text: '834508',
+                              type: TextType.headlineSize12Weight400)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 16,
+        ),
+        AplazoButton(
+            buttonProps: ButtonProps(
+                text: 'AGREGAR MÁS PRODUCTOS',
+                buttonType: ButtonType.secondary),
+            onPressed: () {
+              showAddProductDialog();
+            }),
+        const SizedBox(
+          height: 16,
+        ),
+        AplazoButton(
+            buttonProps: ButtonProps(
+                text: 'Procesar orden', buttonType: ButtonType.primary),
+            onPressed: () {}),
+        const SizedBox(height: 32)
+      ],
+    );
+  }
+
+  Widget rowProduct() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: Container(
+        height: 150,
+        decoration: BoxDecoration(
+            border: Border.all(width: 1, color: Colors.grey),
+            borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+          child: Column(
+            children: [
+              const Row(
+                children: [
+                  Icon(
+                    Icons.delete_outline_outlined,
+                    color: Colors.red,
+                  ),
+                  Spacer(),
+                  Icon(Icons.edit_outlined)
+                ],
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              Row(
+                children: [
+                  AplazoText(
+                      textProps: TextProps(
+                          text: 'Producto',
+                          type: TextType.headlineSize12Weight600Semibold)),
+                  const Spacer(),
+                  AplazoText(
+                      textProps: TextProps(
+                          text: 'Zapatilla Swift Run 22',
+                          type: TextType.headlineSize12Weight400)),
+                ],
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              Row(
+                children: [
+                  AplazoText(
+                      textProps: TextProps(
+                          text: 'SKU',
+                          type: TextType.headlineSize12Weight600Semibold)),
+                  const Spacer(),
+                  AplazoText(
+                      textProps: TextProps(
+                          text: '22DRTYHDFSG',
+                          type: TextType.headlineSize12Weight400)),
+                ],
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              Row(
+                children: [
+                  AplazoText(
+                      textProps: TextProps(
+                          text: 'Cantidad',
+                          type: TextType.headlineSize12Weight600Semibold)),
+                  const Spacer(),
+                  AplazoText(
+                      textProps: TextProps(
+                          text: '1', type: TextType.headlineSize12Weight400)),
+                ],
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              Row(
+                children: [
+                  AplazoText(
+                      textProps: TextProps(
+                          text: 'Precio',
+                          type: TextType.headlineSize12Weight600Semibold)),
+                  const Spacer(),
+                  AplazoText(
+                      textProps: TextProps(
+                          text: '\$2,940.00',
+                          type: TextType.headlineSize12Weight400)),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget emptyState() {
+    return Column(
+      children: [
+        const Spacer(),
+        SvgPicture.asset('assets/images/ic_no_products.svg'),
+        const Spacer(),
+        AplazoText(
+            textProps: TextProps(
+                text: 'Empieza agregando productos.',
+                type: TextType.headlineSize16Weight700)),
+        const Spacer(),
+        AplazoButton(
+            buttonProps: ButtonProps(
+                text: 'Añadir producto', buttonType: ButtonType.primary),
+            onPressed: () {
+              showAddProductDialog();
+            }),
+        const Spacer(),
+        const Spacer(),
+        const Spacer()
+      ],
     );
   }
 
@@ -65,7 +257,7 @@ class _ProductsInPedidoScreenState extends State<ProductsInPedidoScreen> {
                 children: [
                   Row(
                     children: [
-                      Spacer(),
+                      const Spacer(),
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16),
@@ -81,7 +273,7 @@ class _ProductsInPedidoScreenState extends State<ProductsInPedidoScreen> {
                       textProps: TextProps(
                           text: 'Añadir Producto',
                           type: TextType.headlineSize24Weight700)),
-                  SizedBox(
+                  const SizedBox(
                     height: 16,
                   ),
                   AplazoTextField(
@@ -91,7 +283,7 @@ class _ProductsInPedidoScreenState extends State<ProductsInPedidoScreen> {
                           textFieldType: TextFieldType.normal),
                       onChanged: (string) {},
                       controller: skuController),
-                  SizedBox(
+                  const SizedBox(
                     height: 16,
                   ),
                   AplazoTextField(
@@ -101,7 +293,7 @@ class _ProductsInPedidoScreenState extends State<ProductsInPedidoScreen> {
                           textFieldType: TextFieldType.normal),
                       onChanged: (string) {},
                       controller: productController),
-                  SizedBox(
+                  const SizedBox(
                     height: 16,
                   ),
                   AplazoTextField(
@@ -111,7 +303,7 @@ class _ProductsInPedidoScreenState extends State<ProductsInPedidoScreen> {
                           textFieldType: TextFieldType.normal),
                       onChanged: (string) {},
                       controller: quantityController),
-                  SizedBox(
+                  const SizedBox(
                     height: 16,
                   ),
                   AplazoTextField(
@@ -121,7 +313,7 @@ class _ProductsInPedidoScreenState extends State<ProductsInPedidoScreen> {
                           textFieldType: TextFieldType.number),
                       onChanged: (string) {},
                       controller: priceController),
-                  SizedBox(
+                  const SizedBox(
                     height: 16,
                   ),
                   AplazoButton(

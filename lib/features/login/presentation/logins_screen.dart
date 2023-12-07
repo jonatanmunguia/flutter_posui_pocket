@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_posui_pocket/core/extensiones/build_extensions.dart';
 import 'package:flutter_posui_pocket/features/login/bloc/login_bloc.dart';
+import 'package:flutter_posui_pocket/features/main_dashboard/presentation/main_dashboard_screen.dart';
 import 'package:flutter_posui_pocket/ui/components/buttons/aplazo_button.dart';
 import 'package:flutter_posui_pocket/ui/components/inputs/aplazo_textfield.dart';
 import 'package:flutter_posui_pocket/ui/components/loaders/aplazo_loader.dart';
@@ -26,8 +28,9 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
         providers: [BlocProvider<LoginBloc>(create: (context) => LoginBloc())],
-        child: BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
-          if (state is! LoginLoading) {
+        child: BlocConsumer<LoginBloc, LoginState>(
+          builder: (context, state) {
+            if (state is! LoginLoading) {
             return Scaffold(
               appBar: AplazoNavbar(
                   navbarProps:
@@ -60,9 +63,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     AplazoTextField(
                         textFieldProps: TextFieldProps(
-                            hintText: 'Ingresa tu correo electrónico',
-                            label: 'Correo electrónico',
-                            textFieldType: TextFieldType.email),
+                              hintText: 'Usuario',
+                              label: 'Ingresa tu usuario',
+                              textFieldType: TextFieldType.email),
                         onChanged: (text) {},
                         controller: emailController),
                     const SizedBox(
@@ -129,6 +132,12 @@ class _LoginScreenState extends State<LoginScreen> {
           } else {
             return const AplazoLoader();
           }
-        },));
+          },
+          listener: (context, state) {
+            if (state is UserLogged) {
+              context.materialPushAndRemoveUntil(
+                  screen: const MainDashboardScreen());
+            }
+          },));
   }
 }

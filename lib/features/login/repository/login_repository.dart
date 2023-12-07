@@ -1,8 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_posui_pocket/features/login/models/LoginResponse.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 abstract class LoginRepository {
-  Future<void> login(String username, String password);
+  Future<LoginResponse> login(String username, String password);
 }
 
 class LoginRepositoryImpl extends LoginRepository {
@@ -17,10 +18,15 @@ class LoginRepositoryImpl extends LoginRepository {
         maxWidth: 90));
 
   @override
-  Future<void> login(String username, String password) async {
-    final result = await client.post(
-        'https://merchant-acs.aplazo.dev/api/auth/login',
-        data: {'username': username, 'password': password});
-
+  Future<LoginResponse> login(String username, String password) async {
+    try {
+      return await client.post('https://merchant-acs.aplazo.dev/api/auth/login',
+          data: {
+            'username': username,
+            'password': password
+          }).then((value) => LoginResponse.fromJson(value.data));
+    } on DioException {
+      rethrow;
+    }
   }
 }
