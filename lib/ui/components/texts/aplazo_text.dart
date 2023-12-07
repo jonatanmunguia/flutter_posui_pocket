@@ -138,6 +138,8 @@ enum TextType {
       AppTheme.size12, AppTheme.bulletDisable, FontWeight.w500),
   headlineSize12Weight400Red(AppTheme.size12,
       AppTheme.orderAdvertisementPaymentError, FontWeight.w400),
+  headlineSize18Weight600White(
+      AppTheme.size18, AppTheme.secondaryColor, FontWeight.w600),
   headlineSize16Weight400White(
       AppTheme.size16, AppTheme.secondaryColor, FontWeight.w400),
   headlineSize16Weight400DarkSecondary(
