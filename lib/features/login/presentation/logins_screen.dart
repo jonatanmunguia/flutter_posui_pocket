@@ -135,9 +135,9 @@ class _LoginScreenState extends State<LoginScreen> {
           },
           listener: (context, state) {
             if (state is UserLogged) {
-              context.materialPushAndRemoveUntil(
-                  screen: const MainDashboardScreen());
+              context.materialPushAndRemoveUntil(screen: MainDashboardScreen());
             }
-          },));
+          },
+        ));
   }
 }

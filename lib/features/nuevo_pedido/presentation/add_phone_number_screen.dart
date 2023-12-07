@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_posui_pocket/core/extensiones/build_extensions.dart';
+import 'package:flutter_posui_pocket/features/nuevo_pedido/bloc/phone_number/phone_number_bloc.dart';
 import 'package:flutter_posui_pocket/features/nuevo_pedido/presentation/products_in_pedido_screen.dart';
 import 'package:flutter_posui_pocket/ui/components/buttons/aplazo_button.dart';
 import 'package:flutter_posui_pocket/ui/components/inputs/aplazo_textfield.dart';
@@ -24,12 +26,15 @@ class AddPhoneNumberBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextEditingController phoneController = TextEditingController();
 
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 60,
+    return MultiBlocProvider(
+        providers: [BlocProvider(create: (_) => PhoneNumberBloc())],
+        child: BlocConsumer<PhoneNumberBloc, PhoneNumberState>(
+            builder: (context, state) => Scaffold(
+                  body: SafeArea(
+                    child: Column(
+                      children: [
+                        const SizedBox(
+                          height: 60,
             ),
             AplazoText(
                 textProps: TextProps(
@@ -50,8 +55,10 @@ class AddPhoneNumberBody extends StatelessWidget {
                 buttonProps: ButtonProps(
                     text: 'Continuar', buttonType: ButtonType.primary),
                 onPressed: () {
-                  context.materialPush(screen: const ProductsInPedidoScreen());
-                }),
+                              BlocProvider.of<PhoneNumberBloc>(context).add(
+                                  SaveUserPhoneNumber(
+                                      userPhoneNumber: phoneController.text));
+                            }),
             const SizedBox(
               height: 32,
             ),
@@ -61,6 +68,12 @@ class AddPhoneNumberBody extends StatelessWidget {
       appBar: AplazoNavbar(
         navbarProps: NavbarProps(title: 'Pedido nuevo'),
       ),
-    );
+                ),
+            listener: (context, state) {
+              if (state is MoveToNextScreen) {
+                context.materialPush(screen: const ProductsInPedidoScreen());
+                BlocProvider.of<PhoneNumberBloc>(context).add(RestartState());
+              }
+            }));
   }
 }

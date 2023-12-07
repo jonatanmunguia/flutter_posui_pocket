@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_posui_pocket/core/extensiones/build_extensions.dart';
+import 'package:flutter_posui_pocket/features/nuevo_pedido/bloc/products/products_in_pedido_bloc.dart';
+import 'package:flutter_posui_pocket/features/nuevo_pedido/model/ProductModel.dart';
+import 'package:flutter_posui_pocket/features/nuevo_pedido/presentation/success_pedido_screen.dart';
 import 'package:flutter_posui_pocket/ui/components/buttons/aplazo_button.dart';
 import 'package:flutter_posui_pocket/ui/components/inputs/aplazo_textfield.dart';
+import 'package:flutter_posui_pocket/ui/components/loaders/aplazo_loader.dart';
 import 'package:flutter_posui_pocket/ui/components/navigations/aplazo_navbar.dart';
 import 'package:flutter_posui_pocket/ui/components/texts/aplazo_text.dart';
+import 'package:flutter_posui_pocket/ui/extensions/aplazo_strings.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ProductsInPedidoScreen extends StatefulWidget {
@@ -14,22 +20,36 @@ class ProductsInPedidoScreen extends StatefulWidget {
 }
 
 class _ProductsInPedidoScreenState extends State<ProductsInPedidoScreen> {
-  final TextEditingController skuController = TextEditingController();
-  final TextEditingController productController = TextEditingController();
-  final TextEditingController quantityController = TextEditingController();
-  final TextEditingController priceController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ordersList(),
+      body: MultiBlocProvider(
+          providers: [BlocProvider(create: (_) => ProductsInPedidoBloc())],
+          child: BlocConsumer<ProductsInPedidoBloc, ProductsInPedidoState>(
+              builder: (context, state) {
+                if (state is HasProductInCart) {
+                  return ordersList(
+                      state.listProducts, state.totalQuantity.toInt(), context);
+                } else if (state is ProductsInPedidoInitial) {
+                  return emptyState(context);
+                } else {
+                  return AplazoLoader();
+                }
+              },
+              listener: (context, state) {
+                if (state is MoveToSuccessPedido) {
+                  context.materialPush(screen: SuccessPedidoScreen());
+                }
+              })),
       appBar: AplazoNavbar(
         navbarProps: NavbarProps(title: 'Pedido nuevo'),
       ),
     );
   }
 
-  Widget ordersList() {
+  Widget ordersList(List<ProductModel> listProducts, int totalToPayment,
+      BuildContext contextToProvider) {
     return Column(
       children: [
         const SizedBox(
@@ -40,7 +60,9 @@ class _ProductsInPedidoScreenState extends State<ProductsInPedidoScreen> {
                 text: 'Productos', type: TextType.headlineSize24Weight700)),
         Expanded(
             child: ListView.builder(
-                itemCount: 10, itemBuilder: (context, index) => rowProduct())),
+                itemCount: listProducts.length,
+                itemBuilder: (context, index) =>
+                    rowProduct(listProducts[index]))),
         const SizedBox(
           height: 8,
         ),
@@ -63,7 +85,7 @@ class _ProductsInPedidoScreenState extends State<ProductsInPedidoScreen> {
                       const Spacer(),
                       AplazoText(
                           textProps: TextProps(
-                              text: '\$12,940.00',
+                              text: '\$${totalToPayment}',
                               type: TextType.headlineSize12Weight400)),
                     ],
                   ),
@@ -111,7 +133,9 @@ class _ProductsInPedidoScreenState extends State<ProductsInPedidoScreen> {
                 text: 'AGREGAR MÁS PRODUCTOS',
                 buttonType: ButtonType.secondary),
             onPressed: () {
-              showAddProductDialog();
+              BlocProvider.of<ProductsInPedidoBloc>(contextToProvider)
+                  .add(ResetState());
+              showAddProductDialog(contextToProvider);
             }),
         const SizedBox(
           height: 16,
@@ -119,13 +143,16 @@ class _ProductsInPedidoScreenState extends State<ProductsInPedidoScreen> {
         AplazoButton(
             buttonProps: ButtonProps(
                 text: 'Procesar orden', buttonType: ButtonType.primary),
-            onPressed: () {}),
+            onPressed: () {
+              BlocProvider.of<ProductsInPedidoBloc>(contextToProvider)
+                  .add(CreatePedido());
+            }),
         const SizedBox(height: 32)
       ],
     );
   }
 
-  Widget rowProduct() {
+  Widget rowProduct(ProductModel productModel) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: Container(
@@ -159,7 +186,7 @@ class _ProductsInPedidoScreenState extends State<ProductsInPedidoScreen> {
                   const Spacer(),
                   AplazoText(
                       textProps: TextProps(
-                          text: 'Zapatilla Swift Run 22',
+                          text: '${productModel.title}',
                           type: TextType.headlineSize12Weight400)),
                 ],
               ),
@@ -175,7 +202,7 @@ class _ProductsInPedidoScreenState extends State<ProductsInPedidoScreen> {
                   const Spacer(),
                   AplazoText(
                       textProps: TextProps(
-                          text: '22DRTYHDFSG',
+                          text: '${productModel.externalId}',
                           type: TextType.headlineSize12Weight400)),
                 ],
               ),
@@ -191,7 +218,8 @@ class _ProductsInPedidoScreenState extends State<ProductsInPedidoScreen> {
                   const Spacer(),
                   AplazoText(
                       textProps: TextProps(
-                          text: '1', type: TextType.headlineSize12Weight400)),
+                          text: '${productModel.count}',
+                          type: TextType.headlineSize12Weight400)),
                 ],
               ),
               const SizedBox(
@@ -206,7 +234,7 @@ class _ProductsInPedidoScreenState extends State<ProductsInPedidoScreen> {
                   const Spacer(),
                   AplazoText(
                       textProps: TextProps(
-                          text: '\$2,940.00',
+                          text: '\$${productModel.price}',
                           type: TextType.headlineSize12Weight400)),
                 ],
               )
@@ -217,7 +245,7 @@ class _ProductsInPedidoScreenState extends State<ProductsInPedidoScreen> {
     );
   }
 
-  Widget emptyState() {
+  Widget emptyState(BuildContext contextProvider) {
     return Column(
       children: [
         const Spacer(),
@@ -232,7 +260,7 @@ class _ProductsInPedidoScreenState extends State<ProductsInPedidoScreen> {
             buttonProps: ButtonProps(
                 text: 'Añadir producto', buttonType: ButtonType.primary),
             onPressed: () {
-              showAddProductDialog();
+              showAddProductDialog(contextProvider);
             }),
         const Spacer(),
         const Spacer(),
@@ -241,7 +269,12 @@ class _ProductsInPedidoScreenState extends State<ProductsInPedidoScreen> {
     );
   }
 
-  void showAddProductDialog() {
+  void showAddProductDialog(BuildContext productProvider) {
+    final TextEditingController skuController = TextEditingController();
+    final TextEditingController productController = TextEditingController();
+    final TextEditingController quantityController = TextEditingController();
+    final TextEditingController priceController = TextEditingController();
+
     showDialog(
         context: context,
         builder: (context) {
@@ -320,7 +353,19 @@ class _ProductsInPedidoScreenState extends State<ProductsInPedidoScreen> {
                       buttonProps: ButtonProps(
                           text: 'Añadir producto',
                           buttonType: ButtonType.primary),
-                      onPressed: () {})
+                      onPressed: () {
+                        BlocProvider.of<ProductsInPedidoBloc>(productProvider)
+                            .add(AddProduct(
+                                productModel: ProductModel(
+                                    title: productController.text,
+                                    imageUrl: '',
+                                    description: '',
+                                    externalId: skuController.text,
+                                    price: priceController.text.convertToInt(),
+                                    count: quantityController.text
+                                        .convertToInt())));
+                        context.back();
+                      })
                 ],
               ),
             ),
