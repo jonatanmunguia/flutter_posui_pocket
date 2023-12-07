@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_posui_pocket/core/extensiones/build_extensions.dart';
+import 'package:flutter_posui_pocket/features/nuevo_pedido/presentation/add_phone_number_screen.dart';
 import 'package:flutter_posui_pocket/features/panel/presentation/panel_screen.dart';
 import 'package:flutter_posui_pocket/features/ventas/presentation/ventas_screen.dart';
 import 'package:flutter_posui_pocket/ui/components/buttons/aplazo_button.dart';
@@ -134,7 +135,9 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
           AplazoButton(
               buttonProps: ButtonProps(
                   text: 'Nuevo pedido', buttonType: ButtonType.primary),
-              onPressed: () {}),
+              onPressed: () {
+                context.materialPush(screen: const AddPhoneNumberScreen());
+              }),
           const SizedBox(
             height: 32,
           )
